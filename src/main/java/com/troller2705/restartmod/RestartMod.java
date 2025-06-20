@@ -1,5 +1,7 @@
 package com.troller2705.restartmod;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 
@@ -43,15 +45,20 @@ public class RestartMod {
                         .requires(source -> source.hasPermission(4))
                         .executes(ctx -> {
                             CommandSourceStack source = ctx.getSource();
+                            MinecraftServer server = source.getServer();
                             source.sendSuccess(() -> Component.literal("Requesting server restart..."), true);
 
                             new Thread(() -> {
                                 try {
                                     String token = authenticateWithAMP();
                                     if (token != null) {
+
+                                        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                                            player.connection.disconnect(Component.literal("Server is restarting..."));
+                                        }
                                         restartAMPInstance(token);
-                                        Thread.sleep(1000); // let AMP process the command
-                                        source.getServer().halt(false);
+
+                                        source.getServer().stopServer();
                                     } else {
                                         source.sendFailure(Component.literal("Failed to authenticate with AMP."));
                                     }
