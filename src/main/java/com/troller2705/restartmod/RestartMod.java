@@ -1,6 +1,5 @@
 package com.troller2705.restartmod;
 
-import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
@@ -21,6 +20,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Scanner;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -58,9 +58,13 @@ public class RestartMod {
                                             player.connection.disconnect(Component.literal("Server is restarting..."));
                                         }
 
+                                        server.setMotd("Server is restarting...");
+
                                         server.saveEverything(false, true, true);
 
                                         restartAMPInstance(token);
+
+                                        Thread.sleep(Duration.ofSeconds(15));
 
                                         server.halt(false);
                                     } else {
