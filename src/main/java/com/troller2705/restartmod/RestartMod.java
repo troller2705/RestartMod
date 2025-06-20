@@ -1,5 +1,6 @@
 package com.troller2705.restartmod;
 
+import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
@@ -56,9 +57,12 @@ public class RestartMod {
                                         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                                             player.connection.disconnect(Component.literal("Server is restarting..."));
                                         }
+
+                                        server.saveEverything(false, true, true);
+
                                         restartAMPInstance(token);
 
-                                        source.getServer().stopServer();
+                                        server.halt(false);
                                     } else {
                                         source.sendFailure(Component.literal("Failed to authenticate with AMP."));
                                     }
