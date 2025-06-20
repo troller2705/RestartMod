@@ -21,6 +21,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -54,7 +56,9 @@ public class RestartMod {
                                     String token = authenticateWithAMP();
                                     if (token != null) {
 
-                                        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                                        List<ServerPlayer> players = new ArrayList<>(server.getPlayerList().getPlayers());
+
+                                        for (ServerPlayer player : players) {
                                             player.connection.disconnect(Component.literal("Server is restarting..."));
                                         }
 
@@ -64,9 +68,8 @@ public class RestartMod {
 
                                         restartAMPInstance(token);
 
-                                        Thread.sleep(Duration.ofSeconds(15));
-
-                                        server.halt(false);
+                                        //Thread.sleep(Duration.ofSeconds(15));
+                                        //server.halt(false);
                                     } else {
                                         source.sendFailure(Component.literal("Failed to authenticate with AMP."));
                                     }
